@@ -18,6 +18,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Test with pytest
+    - name: Test preprocess with pytest
       run: |
         python -m pytest test/test_preprocess_data.py
+
+    - name: Test features with pytest
+      run: |
+        python -m pytest test/test_create_features.py
