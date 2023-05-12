@@ -13,13 +13,13 @@ class TestCreateFeatures(unittest.TestCase):
             'temp_min': [10, 15, 20],
             'temp_max': [20, 25, 30],
             'wind_speed': [5, 10, 15],
-            'player_ranking': [1,2,3]
+            'player_ranking': [1, 2, 3]
         })
 
         expected_data = pd.DataFrame({
             'strokes_gained': [10, 20, 30],
             'course_length': [400, 500, 600]
-        })
+        }, dtype=float)  # Specify the data type as float
 
         # Apply create_features function
         result = create_features(data)
