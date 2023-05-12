@@ -1,8 +1,3 @@
-import unittest
-import pandas as pd
-import numpy as np
-from src.train_model import train_model
-
 class TestTrainModel(unittest.TestCase):
 
     def test_train_model(self):
@@ -18,7 +13,7 @@ class TestTrainModel(unittest.TestCase):
         model = train_model(data, target)
 
         # Assert that the model has been trained, i.e., it has coefficients
-        self.assertTrue(hasattr(model, 'coef_'))
+        self.assertTrue(hasattr(model.named_steps['ridge'], 'coef_'))
 
 if __name__ == '__main__':
     unittest.main()
