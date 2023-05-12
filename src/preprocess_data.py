@@ -1,3 +1,13 @@
+import pandas as pd
+import requests
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error, r2_score
+from datetime import datetime
+    
 def preprocess_data(data):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
