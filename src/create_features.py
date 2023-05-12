@@ -28,13 +28,13 @@ def create_features(data):
         data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
 
     # Investigate additional interaction features
-    data['interaction_feature_1'] = data['feature1'] * data['feature2']
+    # data['interaction_feature_1'] = data['feature1'] * data['feature2']
 
     # Investigate polynomial features
-    poly = PolynomialFeatures(degree=2, include_bias=False)
-    poly_features = poly.fit_transform(data[['feature1', 'feature2']])
-    poly_columns = poly.get_feature_names(['feature1', 'feature2'])
-    data[poly_columns] = pd.DataFrame(poly_features, columns=poly_columns)
+    # poly = PolynomialFeatures(degree=2, include_bias=False)
+    # poly_features = poly.fit_transform(data[['feature1', 'feature2']])
+    # poly_columns = poly.get_feature_names(['feature1', 'feature2'])
+    # can you get medata[poly_columns] = pd.DataFrame(poly_features, columns=poly_columns)
 
     # Incorporate player-specific features
     data['player_ranking_normalized'] = (data['player_ranking'] - data['player_ranking'].min()) / (
