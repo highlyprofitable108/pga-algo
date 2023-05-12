@@ -27,8 +27,7 @@ class TestCreateFeatures(unittest.TestCase):
             'strokes_gained_per_hazards': [2.0, 2.0, 2.0],
             'avg_temperature': [15.0, 20.0, 25.0],
             'wind_force': [1, 2, 2],
-            'player_ranking': [1, 2, 3],
-            'course_length': [400, 500, 600]
+            'player_ranking': [1, 2, 3]
         })
 
         # Apply create_features function
