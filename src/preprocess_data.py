@@ -1,42 +1,31 @@
+import unittest
 import pandas as pd
-import requests
-import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import Ridge
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error, r2_score
-from datetime import datetime
+from src.create_features import create_features
 
-# TODO Update warning imports
-    
-def preprocess_data(data):
-    """
-    Preprocess the data, including handling missing values, encoding categorical variables,
-    and scaling numerical variables.
-    
-    :param data: pandas DataFrame containing the golf data
-    :return: pandas DataFrame with preprocessed data
-    """
+class TestCreateFeatures(unittest.TestCase):
 
-    # Handle missing values
-    # Replace missing numerical values with the median value of the column
-    numerical_cols = data.select_dtypes(include=np.number).columns
-    for col in numerical_cols:
-        data[col].fillna(data[col].median(), inplace=True)
+    def test_create_features(self):
+        # Create a sample DataFrame for testing
+        data = pd.DataFrame({
+            'strokes_gained': [10, 20, 30],
+            'course_length': [400, 500, 600],
+            'hazards': [5, 10, 15],
+            'temp_min': [10, 15, 20],
+            'temp_max': [20, 25, 30],
+            'wind_speed': [5, 10, 15],
+            'player_ranking': [1,2,3]
+        })
 
-    # Replace missing categorical values with the mode of the column
-    for col in data.select_dtypes(include='category'):
-        data[col].fillna(data[col].mode()[0], inplace=True)
+        expected_data = pd.DataFrame({
+            'strokes_gained': [10, 20, 30],
+            'course_length': [400, 500, 600]
+        })
 
-    # Encode categorical variables
-    # One-hot encode categorical variables with multiple categories
-    data = pd.get_dummies(data, drop_first=True)
+        # Apply create_features function
+        result = create_features(data)
 
-    # Scale numerical variables
-    # Normalize numerical variables to the range [0, 1]
-    for col in numerical_cols:
-        if col in data.columns: # ensure the column still exists
-            data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
+        # Assert that the result matches the expected output
+        pd.testing.assert_frame_equal(result, expected_data)
 
-    return data
+if __name__ == '__main__':
+    unittest.main()
