@@ -46,8 +46,8 @@ def create_features(data):
     data['temperature_category'] = temperature_bins
 
     # Perform feature selection (example using Lasso regularization)
-    X = data.drop('target_column_name', axis=1)
-    y = data['target_column_name']
+    X = data.drop(['strokes_gained', 'course_length', axis=1)
+    y = data['strokes_gained', 'course_length']
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     lasso = Lasso(alpha=0.1)
