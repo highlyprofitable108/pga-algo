@@ -1,3 +1,4 @@
+import unittest
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
@@ -47,12 +48,10 @@ def create_features(data):
 
     # Perform feature selection (example using Lasso regularization)
     X = data.drop(['strokes_gained', 'course_length'], axis=1)
-    y = data['strokes_gained', 'course_length']
+    y = data['strokes_gained']
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     lasso = Lasso(alpha=0.1)
     lasso.fit(X_scaled, y)
     selected_features = X.columns[lasso.coef_ != 0]
-    data = data[selected_features]
-
-    return data
+    data
