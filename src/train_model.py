@@ -9,7 +9,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 # Import custom functions
 from src.preprocess_data import preprocess_data
 from src.create_features import create_features
-from src.train_model import train_model
 from datetime import datetime
 
 # Function to train a Ridge regression model with polynomial features
