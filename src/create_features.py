@@ -49,7 +49,7 @@ def create_features(data):
 
     # Perform feature selection (example using Lasso regularization)
     # Perform feature selection (example using Lasso regularization)
-    X = data.drop('strokes_gained'], axis=1)
+    X = data.drop(['strokes_gained'], axis=1)
     y = data['strokes_gained']  # Separate the target columns
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
