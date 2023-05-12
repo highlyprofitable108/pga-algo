@@ -42,7 +42,7 @@ def create_features(data):
 
     # Create categorical features for weather
     discretizer = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='quantile')
-    temperature_bins = discretizer.fit_transform(data['temperature'].values.reshape(-1, 1))
+    temperature_bins = discretizer.fit_transform(data['avg_temperature'].values.reshape(-1, 1))
     data['temperature_category'] = temperature_bins
 
     # Perform feature selection (example using Lasso regularization)
