@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import numpy np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
@@ -13,7 +14,7 @@ from src.train_model import train_model
 from datetime import datetime
 
 # Function to preprocess the input data (e.g., encoding categorical variables, scaling numerical variables)
-def preprocess_data(data):
+def preprocess_data(df):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
     and scaling numerical variables.
