@@ -18,7 +18,7 @@ class TestCreateFeatures(unittest.TestCase):
 
         expected_data = pd.DataFrame({
             'strokes_gained': [0.0, 0.5, 1.0],  # Update with scaled values
-            'course_length': [400, 500, 600]
+            'course_length': [0.0, 0.5, 1.0]  # Also update with scaled values
         }, dtype=float)
 
         # Apply create_features function
