@@ -12,7 +12,7 @@ class TestCreateFeatures(unittest.TestCase):
             'hazards': [5, 10, 15],
             'temp_min': [10, 15, 20],
             'temp_max': [20, 25, 30],
-            'wind_speed': [5, 10, 15]
+            'wind_speed': [5, 10, 15],
             'player_ranking': [1,2,3]
         })
 
