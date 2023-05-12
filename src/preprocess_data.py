@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from datetime import datetime
 
 # Function to preprocess the input data (e.g., encoding categorical variables, scaling numerical variables)
-def preprocess_data(df):
+def preprocess_data(data):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
     and scaling numerical variables.
