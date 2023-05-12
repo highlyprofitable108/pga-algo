@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import KBinsDiscretizer
+from sklearn.linear_model import Lasso
 
 def create_features(data):
     """
