@@ -48,4 +48,4 @@ def create_features(data):
     selected_features = ['strokes_gained', 'course_length']
     data = data[selected_features]  # Include the selected features in the result
 
-    return data
+    return pd.concat([selected_data, y], axis=1)
