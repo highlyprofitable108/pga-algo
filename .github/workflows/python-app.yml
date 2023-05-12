@@ -26,6 +26,6 @@ jobs:
       run: |
         python -m pytest test/test_create_features.py
 
-    - name: Test features with pytest
+    - name: Test training with pytest
       run: |
         python -m pytest test/test_train_model.py
