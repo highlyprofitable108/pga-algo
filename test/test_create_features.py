@@ -13,6 +13,7 @@ class TestCreateFeatures(unittest.TestCase):
             'temp_min': [10, 15, 20],
             'temp_max': [20, 25, 30],
             'wind_speed': [5, 10, 15]
+            'player_ranking': [1,2,3]
         })
 
         # Expected DataFrame with new features added
