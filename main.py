@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
 
 # Import your custom functions
 from src.preprocess_data import preprocess_data
@@ -27,11 +29,22 @@ def main():
     X = feature_data.drop('target_column_name', axis=1)
     y = feature_data['target_column_name']
 
-    # Train the model
-    best_model = train_model(X, y)
+    # Split the data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Print the best parameters
-    print("Best parameters:", best_model.best_params_)
+    # Train the model
+    best_model = train_model(X_train, y_train)
+
+    # Make predictions on the test set
+    y_pred = best_model.predict(X_test)
+
+    # Evaluate the model
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    # Print the evaluation metrics
+    print("Mean Squared Error:", mse)
+    print("R^2 Score:", r2)
 
 if __name__ == "__main__":
     main()
