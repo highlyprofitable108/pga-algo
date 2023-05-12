@@ -46,6 +46,6 @@ def create_features(data):
     lasso = Lasso(alpha=0.1)
     lasso.fit(X_scaled, y)
     selected_features = ['strokes_gained', 'course_length']
-    data = data[selected_features]  # Include the selected features in the result
+    selected_data = data[selected_features]  # Include the selected features in the result
 
     return pd.concat([selected_data, y], axis=1)
