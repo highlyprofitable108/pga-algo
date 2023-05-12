@@ -19,3 +19,5 @@ def test_preprocess_data():
     processed_data = preprocess_data(data)
     print("/n/nProcessed Data:\n", data)
     assert processed_data['B'].dtype == 'int', "Categorical variables were not encoded correctly"
+    assert 'B_b' in processed_data and processed_data['B_b'].dtype == 'uint8', "Categorical variables were not encoded correctly"
+    assert 'B_c' in processed_data and processed_data['B_c'].dtype == 'uint8', "Categorical variables were not encoded correctly"
