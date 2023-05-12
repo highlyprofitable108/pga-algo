@@ -5,10 +5,6 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error, r2_score
-
-# Import custom functions
-from src.preprocess_data import preprocess_data
-from src.train_model import train_model
 from datetime import datetime
 
 # TODO: Implement function for feature engineering
