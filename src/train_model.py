@@ -4,10 +4,9 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from datetime import datetime
 
-# Function to train a Ridge regression model with polynomial features
 def train_model(data, target):
     """
     Train the model using Ridge regression with polynomial features and cross-validation
@@ -34,7 +33,7 @@ def train_model(data, target):
     }
 
     # Perform a grid search with cross-validation to find the best hyperparameters
-    grid_search = GridSearchCV(model, params, cv=5, scoring='neg_mean_squared_error')
+    grid_search = GridSearchCV(model, params, cv=5, scoring='neg_mean_absolute_error', random_state=42)
     grid_search.fit(X_train, y_train)
 
     # Train the model with the best hyperparameters on the entire training set
@@ -43,12 +42,11 @@ def train_model(data, target):
 
     # Evaluate the model on the test set
     y_pred = best_model.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
-    print(f'Mean Squared Error: {mse:.2f}')
-    print(f'R^2 Score: {r2:.2f}')
+    mae = mean_absolute_error(y_test, y_pred)
+    print(f'Mean Absolute Error: {mae:.2f}')
 
     return best_model
+
 # TODO:
 # 1. Experiment with different regression models, such as Lasso, ElasticNet, or
 #    more advanced models like RandomForestRegressor or XGBoost, and compare their performance.
