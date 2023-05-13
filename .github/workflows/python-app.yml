@@ -36,4 +36,4 @@ jobs:
         
     - name: Begin execution
       run: |
-        python -m pytest test/test_train_model.py
+        python main.py
