@@ -1,12 +1,11 @@
 import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
 
 # Import your custom functions
 from src.preprocess_data import preprocess_data
 from src.create_features import create_features
 from src.train_model import train_model
+from src.evaluate_model import evaluate_model
 
 def main():
     # Load the datasets
@@ -26,25 +25,21 @@ def main():
     feature_data = create_features(preprocessed_data)
 
     # Separate the feature variables and the target variable
-    X = feature_data.drop('target_column_name', axis=1)
-    y = feature_data['target_column_name']
+    X = feature_data.drop('strokes_gained', axis=1)  # Replace 'strokes_gained' with your target column
+    y = feature_data['strokes_gained']  # Replace 'strokes_gained' with your target column
 
     # Split the data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Train the model
-    best_model = train_model(X_train, y_train)
-
-    # Make predictions on the test set
-    y_pred = best_model.predict(X_test)
+    models = train_model(X_train, y_train)
 
     # Evaluate the model
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+    mae, rmse = evaluate_model(models, X_test, y_test)
 
     # Print the evaluation metrics
-    print("Mean Squared Error:", mse)
-    print("R^2 Score:", r2)
+    print("Mean Absolute Error:", mae)
+    print("Root Mean Squared Error:", rmse)
 
 if __name__ == "__main__":
     main()
