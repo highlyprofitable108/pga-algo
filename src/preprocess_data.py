@@ -1,3 +1,10 @@
+def is_row_valid(row):
+    required_columns = ['tour', 'year', 'season', 'event_completed', 'event_name', 'event_id', 'player_name', 'dg_id', 
+                        'fin_text', 'round_num', 'course_name', 'course_num', 'course_par', 'round_score', 'sg_putt', 
+                        'sg_arg', 'sg_app', 'sg_ott', 'sg_t2g', 'sg_total', 'driving_dist', 'driving_acc', 'gir', 
+                        'scrambling', 'prox_rgh', 'prox_fw']
+    return all(pd.notnull(row[col]) for col in required_columns)
+
 def preprocess_data(data):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
@@ -13,8 +20,6 @@ def preprocess_data(data):
         # Handle missing values
         # Replace missing numerical values with the median value of the column
         numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
-        if 'Rating' in numerical_cols:  # check if 'Rating' is in the list before removing it
-            numerical_cols.remove('Rating')  # exclude target variable from scaling
 
         for col in numerical_cols:
             data[col].fillna(data[col].median(), inplace=True)
@@ -38,8 +43,6 @@ def preprocess_data(data):
     except Exception as e:
         print(f"Error occurred during data preprocessing: {str(e)}")
         return None
-
-      
 
 # Advanced Missing Value Imputation: The current function uses simple imputation methods for missing values: median for numerical variables and mode for categorical ones. Depending on your data, you might want to consider more advanced imputation methods. For example, K-Nearest Neighbors (KNN) or Multivariate Imputation by Chained Equations (MICE) for numerical variables, and predictive imputation or multiple imputations for categorical ones.
 # 
