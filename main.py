@@ -1,4 +1,5 @@
 import requests
+import io
 import csv
 import os
 import pandas as pd
