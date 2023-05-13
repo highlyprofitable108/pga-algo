@@ -12,7 +12,7 @@ def main():
     # url1 = 'https://raw.githubusercontent.com/zygmuntz/golf-data/master/golf.csv'
     # url2 = 'https://raw.githubusercontent.com/UCD-GW-Nitrate/nitrate.main/master/Project_Data/golf_course_reviews.csv'
 
-    data1 = pd.read_csv('data/test.csv')
+    data1 = pd.read_csv('data/ASA All PGA Raw Data - Tourn Level.csv')
     # data2 = pd.read_csv(url2)
 
     # Combine the datasets
