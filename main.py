@@ -28,8 +28,8 @@ def combine_csv_files(tours, start_year, end_year):
 
         for tour in tours:
             for year in range(start_year, end_year + 1):
-                csv_data = [row.split(',') for row in fetch_data(tour, year).split('\n')[1:]]  # Remove header row from each CSV and split rows into fields # Remove header row from each CSV
-                writer.writerows(csv.reader(csv_data))
+                csv_data = [row.split(',') for row in fetch_data(tour, year).split('\n')[1:]]  # Remove header row from each CSV and split rows into fields
+                writer.writerows(csv_data)
 
     return combined_file_path
 
