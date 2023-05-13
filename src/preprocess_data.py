@@ -21,22 +21,24 @@ def preprocess_data(data):
 
     # Handle missing values
     # Replace missing numerical values with the median value of the column
-    numerical_cols = data.select_dtypes(include=np.number).columns
+    numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
+    numerical_cols.remove('sg_total')  # exclude target variable from scaling
+    
     for col in numerical_cols:
         data[col].fillna(data[col].median(), inplace=True)
 
     # Replace missing categorical values with the mode of the column
-    for col in data.select_dtypes(include='category'):
+    categorical_cols = data.select_dtypes(include=['object', 'category']).columns
+    for col in categorical_cols:
         data[col].fillna(data[col].mode()[0], inplace=True)
 
     # Encode categorical variables
     # One-hot encode categorical variables with multiple categories
-    data = pd.get_dummies(data, drop_first=True)
+    data = pd.get_dummies(data, columns=categorical_cols, drop_first=True)
 
     # Scale numerical variables
     # Normalize numerical variables to the range [0, 1]
     for col in numerical_cols:
-        if col in data.columns: # ensure the column still exists
-            data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
+        data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
 
     return data
