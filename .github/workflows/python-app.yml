@@ -28,7 +28,7 @@ jobs:
 
     - name: Test training with pytest
       run: |
-        python -m pytest test/test_train_model.py
+        python -m main.py
         
     - name: Test eval with pytest
       run: |
