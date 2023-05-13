@@ -15,7 +15,7 @@ def fetch_data(tour, year):
     response = requests.get(url)
     response.raise_for_status()  # Check for any request errors
 
-    return response.content
+    return response.text  # Get the text content instead of binary content
 
 def combine_csv_files(tours, start_year, end_year):
     data_dir = "data"
@@ -28,7 +28,7 @@ def combine_csv_files(tours, start_year, end_year):
 
         for tour in tours:
             for year in range(start_year, end_year + 1):
-                csv_data = fetch_data(tour, year).decode('utf-8').strip().split('\n')[1:]  # Remove header row from each CSV
+                csv_data = [row.split(',') for row in fetch_data(tour, year).split('\n')[1:]]  # Remove header row from each CSV and split rows into fields # Remove header row from each CSV
                 writer.writerows(csv.reader(csv_data))
 
     return combined_file_path
