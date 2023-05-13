@@ -33,3 +33,7 @@ jobs:
     - name: Test eval with pytest
       run: |
         python -m pytest test/test_train_model.py
+        
+    - name: Begin execution
+      run: |
+        python -m pytest test/test_train_model.py
