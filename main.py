@@ -65,4 +65,7 @@ def main():
 
     # Print the evaluation metrics
     print("Mean Absolute Error:", mae)
-    print("Root Mean Squared Error:", rm
+    print("Root Mean Squared Error:", rmse)
+
+if __name__ == "__main__":
+    main()
