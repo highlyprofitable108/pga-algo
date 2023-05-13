@@ -21,34 +21,30 @@ def fetch_data(tour, year):
     # Replace missing values with 'NA'
     csv_data = csv_data.replace(',,', ',NA,').replace(',\n', ',NA\n')
 
-    # Split the content into lines
-    lines = csv_data.split('\n')
+    # Convert the CSV data into a DataFrame
+    data = pd.read_csv(io.StringIO(csv_data))
 
     # Print header row
-    print(f'Header row: {lines[0]}')
+    print(f'Header row: {data.columns}')
 
     # Print a random data row for debugging
-    import random
-    random_row = random.choice(lines[1:])  # Exclude the header row
+    random_row = data.sample(1)  # Select a random row
     print(f'Random data row: {random_row}')
 
-    return csv_data  # Return the string, not the bytes
+    return data  # Return the DataFrame, not the CSV string
 
 def combine_csv_files(tours, start_year, end_year):
+    combined_data = pd.DataFrame()
+
+    for tour in tours:
+        for year in range(start_year, end_year + 1):
+            data = fetch_data(tour, year)
+            combined_data = pd.concat([combined_data, data])
+
     data_dir = "data"
     os.makedirs(data_dir, exist_ok=True)
     combined_file_path = os.path.join(data_dir, "combined_data.csv")
-
-    with open(combined_file_path, mode='w', newline='') as combined_file:
-        writer = csv.writer(combined_file)
-        writer.writerow(['Tour', 'Year', 'Data'])  # Write header row
-
-        for tour in tours:
-            for year in range(start_year, end_year + 1):
-                csv_data = fetch_data(tour, year)
-                # Split rows into fields
-                rows = [row.split(',') for row in csv_data.split('\n')[1:]]  # Remove header row from each CSV
-                writer.writerows(rows)
+    combined_data.to_csv(combined_file_path, index=False)
 
     return combined_file_path
 
