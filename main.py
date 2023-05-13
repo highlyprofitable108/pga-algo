@@ -56,7 +56,7 @@ def main():
     print(f"Combined CSV file created: {combined_csv_path}")
 
     # Load the combined dataset
-    data = pd.read_csv(combined_csv_path, error_bad_lines=False)
+    data = pd.read_csv(url, error_bad_lines=False, na_values=[''])
 
     # Preprocess the data
     preprocessed_data = preprocess_data(data)
