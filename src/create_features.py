@@ -12,39 +12,46 @@ def create_features(data):
     :param data: pandas DataFrame containing the golf data
     :return: pandas DataFrame with new features added
     """
+    
     # Create interaction features between variables
-    data['strokes_gained_per_course_length'] = data['strokes_gained'] / data['course_length']
-    data['strokes_gained_per_hazards'] = data['strokes_gained'] / data['hazards']
+    data['sg_putt_gir'] = data['sg_putt'] * data['gir']
+    data['sg_app_prox_fw'] = data['sg_app'] * data['prox_fw']
+    data['sg_ott_driving_dist'] = data['sg_ott'] * data['driving_dist']
 
-    # Calculate the average temperature during the tournament
-    data['avg_temperature'] = (data['temp_min'] + data['temp_max']) / 2
+    # Create polynomial features
+    poly = PolynomialFeatures(2, interaction_only=True)
+    numerical_cols = ['sg_putt', 'sg_arg', 'sg_app', 'sg_ott', 'sg_t2g', 'driving_dist', 'driving_acc', 'gir', 'scrambling', 'prox_rgh', 'prox_fw']
+    poly_data = poly.fit_transform(data[numerical_cols])
+    target_feature_names = ['x'.join(['{}^{}'.format(pair[0],pair[1]) for pair in tuple if pair[1]!=0]) for tuple in [zip(numerical_cols,p) for p in poly.powers_]]
+    poly_data = pd.DataFrame(poly_data, columns=target_feature_names)
 
-    # Convert wind speed to wind force category using the Beaufort scale
-    data['wind_force'] = pd.cut(data['wind_speed'],
-                                bins=[0, 1, 4, 7, 11, 17, 24, 31, 39, 47, 56, 64, np.inf],
-                                labels=list(range(0, 12)))
+    # Merge the polynomial features with the original data
+    data = pd.concat([data, poly_data], axis=1)
+    
+    # Calculate the average performance per season
+    data['avg_sg_season'] = data.groupby('season')['sg_total'].transform('mean')
+    
+    # Convert year to "years since start of data"
+    data['years_since_start'] = data['year'] - data['year'].min()
 
-    # Feature scaling (normalize the data to the range [0, 1])
-    for col in ['strokes_gained', 'course_length', 'hazards', 'avg_temperature', 'wind_speed']:
-        data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
+    # Add player performance per course
+    data['avg_sg_player_course'] = data.groupby(['player_name', 'course_name'])['sg_total'].transform('mean')
 
-    # Incorporate player-specific features
-    data['player_ranking_normalized'] = (data['player_ranking'] - data['player_ranking'].min()) / (
-                data['player_ranking'].max() - data['player_ranking'].min())
 
-    # Create categorical features for weather
-    discretizer = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='quantile')
-    temperature_bins = discretizer.fit_transform(data['avg_temperature'].values.reshape(-1, 1))
-    data['temperature_category'] = temperature_bins
-
+    # TODO: Incorporate weather data. You can fetch historical weather data based on the date and location of each event, 
+    # and add this data as new features. Consider weather conditions like temperature, precipitation, and wind speed.
+    
     # Perform feature selection (example using Lasso regularization)
-    X = data[['strokes_gained', 'course_length']].values
-    y = data['strokes_gained'].values.reshape(-1, 1)  # Separate the target column
+    X = data.drop('sg_total', axis=1)  # Remove the target variable
+    y = data['sg_total'].values.reshape(-1, 1)  # Separate the target column
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     lasso = Lasso(alpha=0.1)
     lasso.fit(X_scaled, y)
-    selected_features = ['strokes_gained', 'course_length']
-    selected_data = data[selected_features]  # Include the selected features in the result
+    feature_coef = pd.Series(lasso.coef_, index=X.columns)
+    selected_features = feature_coef[feature_coef != 0].index.tolist()
+
+    # Include only the selected features in the result
+    selected_data = data[selected_features]
 
     return selected_data
