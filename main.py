@@ -15,7 +15,21 @@ def fetch_data(tour, year):
     response = requests.get(url)
     response.raise_for_status()  # Check for any request errors
 
-    return response.text  # Get the text content instead of binary content
+    # Convert the content to string
+    csv_data = response.content.decode('utf-8')
+
+    # Split the content into lines
+    lines = csv_data.split('\n')
+
+    # Print header row
+    print(f'Header row: {lines[0]}')
+
+    # Print a random data row for debugging
+    import random
+    random_row = random.choice(lines[1:])  # Exclude the header row
+    print(f'Random data row: {random_row}')
+
+    return response.content
 
 def combine_csv_files(tours, start_year, end_year):
     data_dir = "data"
@@ -42,7 +56,7 @@ def main():
     print(f"Combined CSV file created: {combined_csv_path}")
 
     # Load the combined dataset
-    data = pd.read_csv(combined_csv_path)
+    data = pd.read_csv(combined_csv_path, error_bad_lines=False)
 
     # Preprocess the data
     preprocessed_data = preprocess_data(data)
