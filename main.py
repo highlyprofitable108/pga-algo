@@ -29,8 +29,8 @@ def main():
     feature_data = create_features(data1)
 
     # Separate the feature variables and the target variable
-    X = feature_data.drop('strokes_gained', axis=1)  # Replace 'strokes_gained' with your target column
-    y = feature_data['strokes_gained']  # Replace 'strokes_gained' with your target column
+    X = feature_data.drop('sg_total', axis=1)  # Replace 'strokes_gained' with your target column
+    y = feature_data['sg_total']  # Replace 'strokes_gained' with your target column
 
     # Split the data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
