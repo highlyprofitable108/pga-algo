@@ -12,38 +12,40 @@ def create_features(data):
     :param data: pandas DataFrame containing the golf data
     :return: pandas DataFrame with new features added
     """
-    
-    # Create interaction features between variables
-    data['sg_putt_gir'] = data['sg_putt'] * data['gir']
-    data['sg_app_prox_fw'] = data['sg_app'] * data['prox_fw']
-    data['sg_ott_driving_dist'] = data['sg_ott'] * data['driving_dist']
+    selected_data = data.copy()  # Create a copy of the original data
 
+    if 'sg_putt' in selected_data.columns:
+        # Create interaction features between variables
+        selected_data['sg_putt_gir'] = selected_data['sg_putt'] * selected_data['gir']
+        selected_data['sg_app_prox_fw'] = selected_data['sg_app'] * selected_data['prox_fw']
+        selected_data['sg_ott_driving_dist'] = selected_data['sg_ott'] * selected_data['driving_dist']
+    
     # Create polynomial features
     poly = PolynomialFeatures(2, interaction_only=True)
     numerical_cols = ['sg_putt', 'sg_arg', 'sg_app', 'sg_ott', 'sg_t2g', 'driving_dist', 'driving_acc', 'gir', 'scrambling', 'prox_rgh', 'prox_fw']
-    poly_data = poly.fit_transform(data[numerical_cols])
+    poly_data = poly.fit_transform(selected_data[numerical_cols])
     target_feature_names = ['x'.join(['{}^{}'.format(pair[0],pair[1]) for pair in tuple if pair[1]!=0]) for tuple in [zip(numerical_cols,p) for p in poly.powers_]]
     poly_data = pd.DataFrame(poly_data, columns=target_feature_names)
 
     # Merge the polynomial features with the original data
-    data = pd.concat([data, poly_data], axis=1)
+    selected_data = pd.concat([selected_data, poly_data], axis=1)
     
     # Calculate the average performance per season
-    data['avg_sg_season'] = data.groupby('season')['sg_total'].transform('mean')
+    selected_data['avg_sg_season'] = selected_data.groupby('season')['sg_total'].transform('mean')
     
     # Convert year to "years since start of data"
-    data['years_since_start'] = data['year'] - data['year'].min()
+    selected_data['years_since_start'] = selected_data['year'] - selected_data['year'].min()
 
     # Add player performance per course
-    data['avg_sg_player_course'] = data.groupby(['player_name', 'course_name'])['sg_total'].transform('mean')
+    selected_data['avg_sg_player_course'] = selected_data.groupby(['player_name', 'course_name'])['sg_total'].transform('mean')
 
 
     # TODO: Incorporate weather data. You can fetch historical weather data based on the date and location of each event, 
     # and add this data as new features. Consider weather conditions like temperature, precipitation, and wind speed.
     
     # Perform feature selection (example using Lasso regularization)
-    X = data.drop('sg_total', axis=1)  # Remove the target variable
-    y = data['sg_total'].values.reshape(-1, 1)  # Separate the target column
+    X = selected_data.drop('sg_total', axis=1)  # Remove the target variable
+    y = selected_data['sg_total'].values.reshape(-1, 1)  # Separate the target column
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     lasso = Lasso(alpha=0.1)
@@ -52,6 +54,6 @@ def create_features(data):
     selected_features = feature_coef[feature_coef != 0].index.tolist()
 
     # Include only the selected features in the result
-    selected_data = data[selected_features]
+    selected_data = selected_data[selected_features]
 
     return selected_data
