@@ -25,13 +25,6 @@ def fetch_data(tour, year):
     # Convert the CSV data into a DataFrame
     data = pd.read_csv(io.StringIO(csv_data))
 
-    # Print header row
-    print(f'Header row: {data.columns}')
-
-    # Print a random data row for debugging
-    random_row = data.sample(1)  # Select a random row
-    print(f'Random data row: {random_row}')
-
     return data  # Return the DataFrame, not the CSV string
 
 def combine_csv_files(tours, start_year, end_year):
@@ -59,11 +52,6 @@ def main():
 
     # Load the combined dataset
     data = pd.read_csv(combined_csv_path, error_bad_lines=False, na_values=[''])
-
-    # Print out some details of the loaded data
-    print(f"Data shape: {data.shape}")
-    print(f"Data columns: {data.columns}")
-    print(data.head())
     
     # Preprocess the data
     preprocessed_data = preprocess_data(data)
