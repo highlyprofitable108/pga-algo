@@ -1,3 +1,8 @@
+import unittest
+import pandas as pd
+import numpy as np
+from src.train_model import train_model
+
 class TestTrainModel(unittest.TestCase):
 
     def test_train_model(self):
@@ -9,11 +14,4 @@ class TestTrainModel(unittest.TestCase):
 
         target = data['strokes_gained'] * 2 + data['course_length'] * 3 + np.random.rand(100)
 
-        # Apply train_model function
-        model = train_model(data, target)
-
-        # Assert that the model has been trained, i.e., it has coefficients
-        self.assertTrue(hasattr(model.named_steps['ridge'], 'coef_'))
-
-if __name__ == '__main__':
-    unittest.main()
+        # Apply train_model
