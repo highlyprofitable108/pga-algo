@@ -9,20 +9,20 @@ from src.evaluate_model import evaluate_model
 
 def main():
     # Load the datasets
-    url1 = 'https://raw.githubusercontent.com/zygmuntz/golf-data/master/golf.csv'
-    url2 = 'https://raw.githubusercontent.com/UCD-GW-Nitrate/nitrate.main/master/Project_Data/golf_course_reviews.csv'
+    # url1 = 'https://raw.githubusercontent.com/zygmuntz/golf-data/master/golf.csv'
+    # url2 = 'https://raw.githubusercontent.com/UCD-GW-Nitrate/nitrate.main/master/Project_Data/golf_course_reviews.csv'
 
-    data1 = pd.read_csv(url1)
-    data2 = pd.read_csv(url2)
+    data1 = pd.read_csv('data/test.csv')
+    # data2 = pd.read_csv(url2)
 
     # Combine the datasets
-    combined_data = pd.concat([data1, data2], ignore_index=True)
+    # combined_data = pd.concat([data1, data2], ignore_index=True)
 
     # Preprocess the data
-    preprocessed_data = preprocess_data(combined_data)
+    # preprocessed_data = preprocess_data(combined_data)
 
     # Create new features
-    feature_data = create_features(preprocessed_data)
+    feature_data = create_features(data1)
 
     # Separate the feature variables and the target variable
     X = feature_data.drop('strokes_gained', axis=1)  # Replace 'strokes_gained' with your target column
