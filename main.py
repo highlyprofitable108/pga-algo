@@ -1,3 +1,6 @@
+import requests
+import csv
+import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -7,26 +10,45 @@ from src.create_features import create_features
 from src.train_model import train_model
 from src.evaluate_model import evaluate_model
 
+def fetch_data(tour, year):
+    url = f"https://feeds.datagolf.com/historical-raw-data/rounds?tour={tour}&event_id=all&year={year}&file_format=csv&key=[YOUR_API_KEY]"
+    response = requests.get(url)
+    response.raise_for_status()  # Check for any request errors
+
+    return response.content
+
+def combine_csv_files(tours, start_year, end_year):
+    data_dir = "data"
+    os.makedirs(data_dir, exist_ok=True)
+    combined_file_path = os.path.join(data_dir, "combined_data.csv")
+
+    with open(combined_file_path, mode='w', newline='') as combined_file:
+        writer = csv.writer(combined_file)
+        writer.writerow(['Tour', 'Year', 'Data'])  # Write header row
+
+        for tour in tours:
+            for year in range(start_year, end_year + 1):
+                csv_data = fetch_data(tour, year).decode('utf-8').strip().split('\n')[1:]  # Remove header row from each CSV
+                writer.writerows(csv.reader(csv_data))
+
+    return combined_file_path
+
 def main():
-    # Load the datasets
-    # url1 = 'https://raw.githubusercontent.com/zygmuntz/golf-data/master/golf.csv'
-    # url2 = 'https://raw.githubusercontent.com/UCD-GW-Nitrate/nitrate.main/master/Project_Data/golf_course_reviews.csv'
+    tours = ['pga', 'kft', 'euro']
+    start_year = 2017
+    end_year = 2023  # Update to the current year if desired
 
-    data1 = pd.read_csv('data/ASA All PGA Raw Data - Tourn Level.csv')
-    # data2 = pd.read_csv(url2)
+    combined_csv_path = combine_csv_files(tours, start_year, end_year)
+    print(f"Combined CSV file created: {combined_csv_path}")
 
-    # Print the column names of data1
-    print("Column Names of data1:")
-    print(data1.columns)
-
-    # Combine the datasets
-    # combined_data = pd.concat([data1, data2], ignore_index=True)
+    # Load the combined dataset
+    data = pd.read_csv(combined_csv_path)
 
     # Preprocess the data
-    # preprocessed_data = preprocess_data(combined_data)
+    preprocessed_data = preprocess_data(data)
 
     # Create new features
-    feature_data = create_features(data1)
+    feature_data = create_features(preprocessed_data)
 
     # Separate the feature variables and the target variable
     X = feature_data.drop('sg_total', axis=1)  # Replace 'strokes_gained' with your target column
@@ -43,7 +65,4 @@ def main():
 
     # Print the evaluation metrics
     print("Mean Absolute Error:", mae)
-    print("Root Mean Squared Error:", rmse)
-
-if __name__ == "__main__":
-    main()
+    print("Root Mean Squared Error:", rm
