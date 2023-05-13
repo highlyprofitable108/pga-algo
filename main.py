@@ -18,6 +18,9 @@ def fetch_data(tour, year):
     # Convert the content to string
     csv_data = response.content.decode('utf-8')
 
+    # Replace missing values with 'NA'
+    csv_data = csv_data.replace(',,', ',NA,').replace(',\n', ',NA\n')
+
     # Split the content into lines
     lines = csv_data.split('\n')
 
@@ -42,8 +45,10 @@ def combine_csv_files(tours, start_year, end_year):
 
         for tour in tours:
             for year in range(start_year, end_year + 1):
-                csv_data = [row.split(',') for row in fetch_data(tour, year).split('\n')[1:]]  # Remove header row from each CSV and split rows into fields
-                writer.writerows(csv_data)
+                csv_data = fetch_data(tour, year)
+                # Split rows into fields
+                rows = [row.split(',') for row in csv_data.split('\n')[1:]]  # Remove header row from each CSV
+                writer.writerows(rows)
 
     return combined_file_path
 
