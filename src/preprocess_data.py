@@ -9,21 +9,39 @@ from sklearn.metrics import mean_squared_error, r2_score
 from datetime import datetime
 
 # TODO Update warning imports
-    
+
+required_variables = ['sg_total', 'sg_putt', 'gir', 'sg_app', 'prox_fw', 'sg_ott', 'driving_dist', 'driving_acc',
+                      'sg_arg', 'sg_t2g', 'scrambling', 'prox_rgh', 'season', 'player_name', 'course_name',
+                      'year']
+
+def is_row_valid(row):
+    """
+    Check if a row is missing any required variables.
+
+    :param row: pandas Series representing a row of data
+    :return: True if the row contains all required variables, False otherwise
+    """
+    for variable in required_variables:
+        if variable not in row:
+            return False
+    return True
+
 def preprocess_data(data):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
     and scaling numerical variables.
-    
+
     :param data: pandas DataFrame containing the golf data
     :return: pandas DataFrame with preprocessed data
     """
+    # Filter out rows that do not contain all required variables
+    data = data[data.apply(is_row_valid, axis=1)]
 
     # Handle missing values
     # Replace missing numerical values with the median value of the column
     numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
-    if 'sg_total' in numerical_cols:  # check if 'sg_total' is in the list before removing it
-        numerical_cols.remove('sg_total')  # exclude target variable from scaling
+    if 'Rating' in numerical_cols:  # check if 'Rating' is in the list before removing it
+        numerical_cols.remove('Rating')  # exclude target variable from scaling
 
     for col in numerical_cols:
         data[col].fillna(data[col].median(), inplace=True)
