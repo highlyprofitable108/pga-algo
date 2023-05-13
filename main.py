@@ -63,6 +63,11 @@ def main():
     # Load the combined dataset
     data = pd.read_csv(combined_csv_path, error_bad_lines=False, na_values=[''])
 
+    # Print out some details of the loaded data
+    print(f"Data shape: {data.shape}")
+    print(f"Data columns: {data.columns}")
+    print(data.head())
+    
     # Preprocess the data
     preprocessed_data = preprocess_data(data)
 
