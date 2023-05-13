@@ -1,39 +1,42 @@
 import pandas as pd
-import requests
+import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 
-def train_model(data, target):
+def train_model(data, target_column):
     """
-    Train the model using Ridge regression with polynomial features and cross-validation
+    Train the model using Ridge regression with cross-validation
     to find the best hyperparameters.
     
     :param data: pandas DataFrame containing the preprocessed golf data
-    :param target: pandas Series containing the target variable
+    :param target_column: str, name of the target variable column
     :return: trained model
     """
 
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=42)
+    # Separate target variable from the rest of the data
+    y = data[target_column]
+    X = data.drop(target_column, axis=1)
 
-    # Create a pipeline with PolynomialFeatures and Ridge regression
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create a pipeline with StandardScaler and Ridge regression
     model = Pipeline([
-        ('poly', PolynomialFeatures()),
+        ('scaler', StandardScaler()),
         ('ridge', Ridge())
     ])
 
     # Define the hyperparameters and their possible values for fine-tuning
     params = {
-        'poly__degree': range(1, 4),
         'ridge__alpha': [1e-3, 1e-2, 1e-1, 1, 10, 100]
     }
 
     # Perform a grid search with cross-validation to find the best hyperparameters
-    grid_search = GridSearchCV(model, params, cv=5, scoring='neg_mean_absolute_error', random_state=42)
+    grid_search = GridSearchCV(model, params, cv=5, scoring='neg_mean_absolute_error', n_jobs=-1)
     grid_search.fit(X_train, y_train)
 
     # Train the model with the best hyperparameters on the entire training set
