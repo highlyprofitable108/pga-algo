@@ -1,9 +1,3 @@
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import Lasso
-
 def create_features(data):
     """
     Create new features from the existing data.
@@ -15,22 +9,25 @@ def create_features(data):
         # Checking if the data is None or empty
         if data is None or data.empty:
             raise ValueError("Input data is None or empty")
-            
-        # Checking if 'sg_total' is in the dataframe
-        if 'sg_total' not in data.columns:
-            raise ValueError("'sg_total' is not in the dataframe")
+        
+        # Handle missing values before creating new features
+        numerical_cols = ['sg_putt', 'sg_arg', 'sg_app', 'sg_ott', 'sg_t2g', 'sg_total', 'driving_dist', 'driving_acc', 'gir', 'scrambling', 'prox_rgh', 'prox_fw']
+        for col in numerical_cols:
+            data[col].fillna(data[col].median(), inplace=True)
+
+        categorical_cols = ['tour', 'year', 'season', 'event_completed', 'event_name', 'event_id', 'player_name', 'dg_id', 'fin_text', 'round_num', 'course_name', 'course_num', 'course_par', 'round_score']
+        for col in categorical_cols:
+            data[col].fillna(data[col].mode()[0], inplace=True)
 
         selected_data = data.copy()  # Create a copy of the original data
 
-        if 'sg_putt' in selected_data.columns:
-            # Create interaction features between variables
-            selected_data['sg_putt_gir'] = selected_data['sg_putt'] * selected_data['gir']
-            selected_data['sg_app_prox_fw'] = selected_data['sg_app'] * selected_data['prox_fw']
-            selected_data['sg_ott_driving_dist'] = selected_data['sg_ott'] * selected_data['driving_dist']
+        # Create interaction features between variables
+        selected_data['sg_putt_gir'] = selected_data['sg_putt'] * selected_data['gir']
+        selected_data['sg_app_prox_fw'] = selected_data['sg_app'] * selected_data['prox_fw']
+        selected_data['sg_ott_driving_dist'] = selected_data['sg_ott'] * selected_data['driving_dist']
         
         # Create polynomial features
         poly = PolynomialFeatures(2, interaction_only=True)
-        numerical_cols = ['sg_putt', 'sg_arg', 'sg_app', 'sg_ott', 'sg_t2g', 'driving_dist', 'driving_acc', 'gir', 'scrambling', 'prox_rgh', 'prox_fw']
         poly_data = poly.fit_transform(selected_data[numerical_cols])
         target_feature_names = ['x'.join(['{}^{}'.format(pair[0],pair[1]) for pair in tuple if pair[1]!=0]) for tuple in [zip(numerical_cols,p) for p in poly.powers_]]
         poly_data = pd.DataFrame(poly_data, columns=target_feature_names)
@@ -50,12 +47,14 @@ def create_features(data):
         # Handle blank values by replacing them with appropriate missing value representation
         selected_data.replace('', np.nan, inplace=True)
 
-        # TODO: Incorporate weather data. You can fetch historical weather data based on the date and location of each event, 
-        # and add this data as new features. Consider weather conditions like temperature, precipitation, and wind speed.
-        
         # Perform feature selection (example using Lasso regularization)
         X = selected_data.drop('sg_total', axis=1)  # Remove the target variable
         y = selected_data['sg_total'].values.reshape(-1, 1)  # Separate the target column
+        
+        # Replace the missing values in X and y with appropriate representation
+        X = X.fillna(X.median())
+        y = y.fillna(y.median())
+
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
         lasso = Lasso(alpha=0.1)
