@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 
 def evaluate_model(models, X_test, y_test):
