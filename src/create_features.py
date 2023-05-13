@@ -60,7 +60,7 @@ def create_features(data):
         X_scaled = scaler.fit_transform(X)
         lasso = Lasso(alpha=0.1)
         lasso.fit(X_scaled, y)
-                feature_coef = pd.Series(lasso.coef_, index=X.columns)
+        feature_coef = pd.Series(lasso.coef_, index=X.columns)
         selected_features = feature_coef[feature_coef != 0].index.tolist()
 
         # Include only the selected features in the result
