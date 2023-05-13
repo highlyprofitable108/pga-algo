@@ -11,7 +11,7 @@ from src.train_model import train_model
 from src.evaluate_model import evaluate_model
 
 def fetch_data(tour, year):
-    url = f"https://feeds.datagolf.com/historical-raw-data/rounds?tour={tour}&event_id=all&year={year}&file_format=csv&key=[YOUR_API_KEY]"
+    url = f"https://feeds.datagolf.com/historical-raw-data/rounds?tour={tour}&event_id=all&year={year}&file_format=csv&key=195c3cb68dd9f46d7feaafc4829c"
     response = requests.get(url)
     response.raise_for_status()  # Check for any request errors
 
