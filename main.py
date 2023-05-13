@@ -15,6 +15,10 @@ def main():
     data1 = pd.read_csv('data/ASA All PGA Raw Data - Tourn Level.csv')
     # data2 = pd.read_csv(url2)
 
+    # Print the column names of data1
+    print("Column Names of data1:")
+    print(data1.columns)
+
     # Combine the datasets
     # combined_data = pd.concat([data1, data2], ignore_index=True)
 
