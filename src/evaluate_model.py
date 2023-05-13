@@ -1,3 +1,7 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, roc_curve, auc
+
 def evaluate_model(models, X_test, y_test):
     """
     Evaluate the performance of an ensemble of models on a test set.
