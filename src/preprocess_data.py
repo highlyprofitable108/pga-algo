@@ -1,31 +1,3 @@
-import pandas as pd
-import requests
-import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import Ridge
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error, r2_score
-from datetime import datetime
-
-# TODO Update warning imports
-
-required_variables = ['sg_total', 'sg_putt', 'gir', 'sg_app', 'prox_fw', 'sg_ott', 'driving_dist', 'driving_acc',
-                      'sg_arg', 'sg_t2g', 'scrambling', 'prox_rgh', 'season', 'player_name', 'course_name',
-                      'year']
-
-def is_row_valid(row):
-    """
-    Check if a row is missing any required variables.
-
-    :param row: pandas Series representing a row of data
-    :return: True if the row contains all required variables, False otherwise
-    """
-    for variable in required_variables:
-        if variable not in row:
-            return False
-    return True
-
 def preprocess_data(data):
     """
     Preprocess the data, including handling missing values, encoding categorical variables,
@@ -34,30 +6,49 @@ def preprocess_data(data):
     :param data: pandas DataFrame containing the golf data
     :return: pandas DataFrame with preprocessed data
     """
-    # Filter out rows that do not contain all required variables
-    data = data[data.apply(is_row_valid, axis=1)]
+    try:
+        # Filter out rows that do not contain all required variables
+        data = data[data.apply(is_row_valid, axis=1)]
 
-    # Handle missing values
-    # Replace missing numerical values with the median value of the column
-    numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
-    if 'Rating' in numerical_cols:  # check if 'Rating' is in the list before removing it
-        numerical_cols.remove('Rating')  # exclude target variable from scaling
+        # Handle missing values
+        # Replace missing numerical values with the median value of the column
+        numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
+        if 'Rating' in numerical_cols:  # check if 'Rating' is in the list before removing it
+            numerical_cols.remove('Rating')  # exclude target variable from scaling
 
-    for col in numerical_cols:
-        data[col].fillna(data[col].median(), inplace=True)
+        for col in numerical_cols:
+            data[col].fillna(data[col].median(), inplace=True)
 
-    # Replace missing categorical values with the mode of the column
-    categorical_cols = data.select_dtypes(include=['object', 'category']).columns
-    for col in categorical_cols:
-        data[col].fillna(data[col].mode()[0], inplace=True)
+        # Replace missing categorical values with the mode of the column
+        categorical_cols = data.select_dtypes(include=['object', 'category']).columns
+        for col in categorical_cols:
+            data[col].fillna(data[col].mode()[0], inplace=True)
 
-    # Encode categorical variables
-    # One-hot encode categorical variables with multiple categories
-    data = pd.get_dummies(data, columns=categorical_cols, drop_first=True)
+        # Encode categorical variables
+        # One-hot encode categorical variables with multiple categories
+        data = pd.get_dummies(data, columns=categorical_cols, drop_first=True)
 
-    # Scale numerical variables
-    # Normalize numerical variables to the range [0, 1]
-    for col in numerical_cols:
-        data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
+        # Scale numerical variables
+        # Normalize numerical variables to the range [0, 1]
+        for col in numerical_cols:
+            data[col] = (data[col] - data[col].min()) / (data[col].max() - data[col].min())
 
-    return data
+        return data
+
+    except Exception as e:
+        print(f"Error occurred during data preprocessing: {str(e)}")
+        return None
+
+      
+
+# Advanced Missing Value Imputation: The current function uses simple imputation methods for missing values: median for numerical variables and mode for categorical ones. Depending on your data, you might want to consider more advanced imputation methods. For example, K-Nearest Neighbors (KNN) or Multivariate Imputation by Chained Equations (MICE) for numerical variables, and predictive imputation or multiple imputations for categorical ones.
+# 
+# Feature Scaling: The current function uses min-max scaling for numerical variables. Depending on your data and model, you might want to consider other scaling methods, such as standard scaling (z-score normalization), log transformation, or others.
+# 
+# Categorical Variable Encoding: The current function uses one-hot encoding for categorical variables. Depending on the number of categories and their nature, other encoding methods might be more suitable. For example, ordinal encoding for ordinal variables, binary encoding for high cardinality variables, target encoding, etc.
+# 
+# Outlier Detection and Handling: The current function does not include any specific handling for outliers. Depending on your data and model, you might want to add an outlier detection and handling step. For example, using z-score, IQR, or more advanced methods like DBSCAN or Isolation Forest, and then removing or transforming the outliers.
+# 
+# Feature Extraction: Depending on your data, there might be opportunities for feature extraction. For example, extracting the year, month, and day from a date variable, calculating the time since a particular event, etc.
+# 
+# Data Transformation: Depending on your data and model, you might want to apply some data transformations. For example, applying a log transformation to skewed numerical variables, or creating interaction terms for certain variables.
