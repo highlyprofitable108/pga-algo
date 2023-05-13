@@ -22,8 +22,9 @@ def preprocess_data(data):
     # Handle missing values
     # Replace missing numerical values with the median value of the column
     numerical_cols = data.select_dtypes(include=np.number).columns.tolist()
-    numerical_cols.remove('sg_total')  # exclude target variable from scaling
-    
+    if 'sg_total' in numerical_cols:  # check if 'sg_total' is in the list before removing it
+        numerical_cols.remove('sg_total')  # exclude target variable from scaling
+
     for col in numerical_cols:
         data[col].fillna(data[col].median(), inplace=True)
 
