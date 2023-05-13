@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import mean_absolute_error, mean_squared_error, confusion_matrix, roc_curve, auc
 
 def evaluate_model(models, X_test, y_test):
     """
