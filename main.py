@@ -29,7 +29,7 @@ def fetch_data(tour, year):
     random_row = random.choice(lines[1:])  # Exclude the header row
     print(f'Random data row: {random_row}')
 
-    return response.content
+    return csv_data  # Return the string, not the bytes
 
 def combine_csv_files(tours, start_year, end_year):
     data_dir = "data"
